@@ -1,0 +1,25 @@
+Game of LIfe - Paralelizacija
+
+Povetek:
+
+Motivacija: TODO
+Problem sva si izbrala zaradi zanimivosti ideje igre,
+
+Kratek opis: TODO
+
+Pseudokoda: TODO
+
+Ocenitev časovnih zahtevnosti:
+
+Časovna zahtevnost:
+f(n,m,s) = O(n*m*s)
+
+Prostorska zahtevnost:
+g(n,m) = O(n*m)
+
+n = velikost horizontalnega polja
+m = velikost vertikalnega polja
+s = število vplivnih okrožnih celic
+
+
+
