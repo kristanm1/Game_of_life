@@ -1,50 +1,70 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <sys/time.h>
 
 //---------------------------konstante--------------------------------------//
-#define WORLD_SIZE_X 10
-#define WORLD_SIZE_Y 10
-
+#define WORLD_SIZE_HEIGHT 1000
+#define WORLD_SIZE_WIDTH 200
+#define MAX_ITERATION 512
+#define THREADS_COUNT 4
 //---------------------------strukture--------------------------------------//
 typedef struct {
-    unsigned int x, y;
-    int **area;
+    int width, height, **area;
 } world;
 
+typedef struct {
+	int min, max, **area;
+	world *w;
+} param;
+
 //---------------------------glave vseh funkcij--------------------------------------//
-world* createWorld(int sizeX, int sizeY);
-int numOfNeighbors(int i, int j, world *w);
-void addNewArea(world *w, int **area);
-void simulateOneCicle(world *w);
-void destroyWorld(world *w);
-void printWorld(world *w);
+world* 	createWorld(int, int);
+void 	addNewArea(world*, int**);
+void 	simulateOneCicle(world*);
+void 	simulateOneCicle(world*);
+void 	destroyWorld(world*);
+void 	printWorld(world*);
+void 	simulate(world*);
+void 	simulateMultyOneCicle(world*, int);
+void 	simulateMulty(world*, int);
+int 	numOfNeighbors(int, int, world*);
+int 	compareWorldAreas(world*, world*);
+int** 	createNewArea(int , int);
+void* 	doSomething(void*);
+double 	simulateMax(world*, int);
+double 	simulateMaxMulty(world*, int, int);
 
-void destroyGraphics(void);
-void createWindow(int argc, char **argv);
+int main(int, char**);
 
-int main(int argc, char **argv);
+//---------------------------funkcije za struct--------------------------------------//
 
-//---------------------------struct in funkcije za struct--------------------------------------//
-
-world* createWorld(int sizeX, int sizeY) {
+/*
+	Kreiraj nov svet(visina, sirina):
+		-svet je na zacetku polje mrtvih celic
+*/
+world* createWorld(int size_x, int size_y) {
     world *w = (world*) malloc(sizeof(world));
-    w->area = (int**) malloc(sizeof(int*) * sizeX);
-    w->x = sizeX;
-    w->y = sizeY;
+    w->area = (int**) malloc(sizeof(int*) * size_x);
+    w->height = size_x;
+    w->width = size_y;
     int i;
-    for(i = 0; i < sizeX; i++) {
-        w->area[i] = (int*) calloc(sizeof(int), sizeY);
+    for(i = 0; i < size_x; i++) {
+        w->area[i] = (int*) calloc(sizeof(int), size_y);
     }
     return w;
 }
 
+/*
+	Metoda presteje zive sosede celice(i, j) v svetu w
+*/
 int numOfNeighbors(int i, int j, world *w) {
     int n, m, num_of_neighbors = 0;
     for(n = -1; n < 2; n++) {
         for(m = -1; m < 2; m++) {
             if(n == 0 && m == 0) continue;
-            if((i + n) >= 0 && (i + n) < w->x && (j + m) >= 0 && (j + m) < w->y) {
+            if((i + n) >= 0 && (i + n) < w->height && (j + m) >= 0 && (j + m) < w->width) {
                 if(w->area[i+n][j+m] > 0) {
                     num_of_neighbors++;
                 }
@@ -54,21 +74,37 @@ int numOfNeighbors(int i, int j, world *w) {
     return num_of_neighbors;
 }
 
+/*
+	Dodaj novo polje v svet in sprosi resurse starega polja
+*/
 void addNewArea(world *w, int **area) {
     int i;
-    for(i = 0; i < w->x; i++) {
+    for(i = 0; i < w->height; i++) {
         free(w->area[i]);
     }
     free(w->area);
     w->area = area;
 }
 
-void simulateOneCicle(world *w) {
-    int i, j, non, **area = (int**) malloc(sizeof(int*) * w->x);
+/*
+	Vrne novo polje velikosti height x width
+*/
+int** createNewArea(int height, int width) {
+	int **area = (int**) malloc(sizeof(int*) * height), i;
+	for(i = 0; i < height; i++) {
+		area[i] = (int*) calloc(sizeof(int), width);
+	}
+	return area;
+}
 
-    for(i = 0; i < w->x; i++) {
-        area[i] = (int*) calloc(sizeof(int), w->y);
-        for(j = 0; j < w->y; j++) {
+/*
+	Simulira eno generacijo sveta na eni niti
+*/
+void simulateOneCicle(world *w) {
+    int i, j, non, **area = (int**) malloc(sizeof(int*) * w->height);
+    for(i = 0; i < w->height; i++) {
+        area[i] = (int*) calloc(sizeof(int), w->width);
+        for(j = 0; j < w->width; j++) {
             non = numOfNeighbors(i, j, w);
             if(w->area[i][j] > 0) {
                 if(non == 2 || non == 3) {
@@ -88,9 +124,12 @@ void simulateOneCicle(world *w) {
     addNewArea(w, area);
 }
 
+/*
+	Sprosti resurse za svet
+*/
 void destroyWorld(world *w) {
     int i;
-    for(i = 0; i < w->x; i++) {
+    for(i = 0; i < w->height; i++) {
         free(w->area[i]);
     }
     free(w->area);
@@ -99,15 +138,19 @@ void destroyWorld(world *w) {
 
 void printWorld(world *w) {
     int i, j;
-    for(i = 0; i < w->x; i++) {
-        for(j = 0; j < w->y; j++) {
+    for(i = 0; i < w->height; i++) {
+        for(j = 0; j < w->width; j++) {
             printf("%u ", w->area[i][j]);
         }
         printf("\n");
     }
-    printf("World size: %dx%d.\n", w->x, w->y);
+    printf("World size[height:%d, width:%d]\n", w->height, w->width);
 }
 
+/*
+	Simulira v neskoncno z izpisom v konzolo na eni niti
+		-exit = ctrl + c
+*/
 void simulate(world *w) {
     while(1) {
         simulateOneCicle(w);
@@ -116,30 +159,152 @@ void simulate(world *w) {
     }
 }
 
-//---------------------------graphics--------------------------------------//
+/*
+	Simulira max generacij na eni niti in vrne long long v milisekundah porabljenega casa
+*/
+double simulateMax(world *w, int max) {
+	struct timeval t1, t2;
+	int i;
+	gettimeofday(&t1, NULL);
+	for(i = 0; i < max; i++) {
+		simulateOneCicle(w);
+	}
+	gettimeofday(&t2, NULL);
+	double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
+	time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+	return time_elapsed;
+}
 
+/*
+	Funkcija primerja svetova in vrne 1 ce sta enaka in 0 ce sta razlicna
+*/
+int compareWorldAreas(world *w1, world *w2) {
+	if(w1->width == w2->width && w1->height == w2->height) {
+		int i, j;
+		for(i = 0; i < w1->height; i++) {
+			for(j = 0; j < w1->width; j++) {
+				if(w1->area[i][j] != w2->area[i][j]) {
+					return 0;
+				}
+			}
+		}
+		return 1;
+	}
+	return 0;
+}
+
+/*
+	Funkcija ki jo izvaja nit
+*/
+void* doSomething(void *arg) {
+	param *p = (param*) arg;
+	int i, j, non;
+	world *w = p->w;
+    for(i = p->min; i < p->max; i++) {
+        for(j = 0; j < w->width; j++) {
+            non = numOfNeighbors(i, j, w);
+            if(w->area[i][j] > 0) {
+                if(non == 2 || non == 3) {
+                    p->area[i][j] = w->area[i][j] + 1;
+                }
+                else {
+                    p->area[i][j] = 0;
+                }
+            }
+            else {
+                if(non == 3) {
+                    p->area[i][j] = 1;
+                }
+            }
+        }
+    }
+	return NULL;	
+}
+
+/*
+	Simulira eno generacijo sveta na threadCount nitih
+*/
+void simulateMultyOneCicle(world *w, int threadCount) {
+	pthread_t t[threadCount];
+	param p[threadCount];
+	int **newArea = createNewArea(w->height, w->width), i, min = 0, max, delta = w->height/threadCount + 1;
+	for(i = 0; i < threadCount; i++) {
+		max = min + delta;
+		if(min >= w->height && max > w->height) {
+			min = w->height;
+			max = w->height;
+		}
+		else if(max > w->height) {
+			max = w->height;
+		}
+		p[i].min = min;
+		p[i].max = max;
+		p[i].area = newArea;
+		p[i].w = w;
+		pthread_create(&t[i], NULL, doSomething, (void*) &p[i]);
+		min += delta;
+	}
+	for(i = 0; i < threadCount; i++) {
+		pthread_join(t[i], NULL);
+	}
+	addNewArea(w, newArea);
+}
+
+/*
+	Simulira max generacij na threadCount nitih in vrne long long v milisekundah porabljenega casa
+*/
+double simulateMaxMulty(world *w, int threadCount, int max) {
+	struct timeval t1, t2;
+	int i;
+	gettimeofday(&t1, NULL);
+	for(i = 0; i < max; i++) {
+		simulateMultyOneCicle(w, threadCount);
+	}
+	gettimeofday(&t2, NULL);
+	double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
+	time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+	return time_elapsed;
+}
+
+/*
+	Simulira v neskoncno z izpisom v konzolo na threadCount nitih
+		-exit = ctrl + c
+*/
+void simulateMulty(world *w, int threadCount) {
+	while(1) {
+		simulateMultyOneCicle(w, threadCount);
+		sleep(2.0);
+		printWorld(w);
+	}
+}
 
 //---------------------------main--------------------------------------//
 
 int main(int argc, char **argv) {
 
-    world *w = createWorld(WORLD_SIZE_X, WORLD_SIZE_Y);
+    world *w1 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
     
-    w->area[0][2] = 1;
-    w->area[1][2] = 1;
-    w->area[2][2] = 1;
-    w->area[2][1] = 1;
-    w->area[1][0] = 1;
+    w1->area[0][2] = 1;
+    w1->area[1][2] = 1;
+    w1->area[2][2] = 1;
+    w1->area[2][1] = 1;
+    w1->area[1][0] = 1;
 
-    w->area[5][5] = 1;
-    w->area[5][4] = 1;
-    w->area[4][4] = 1;
-    w->area[4][5] = 1;
-
-    printWorld(w);
-
-    simulate(w);
+    world *w2 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
     
-    destroyWorld(w);
+    w2->area[0][2] = 1;
+    w2->area[1][2] = 1;
+    w2->area[2][2] = 1;
+    w2->area[2][1] = 1;
+    w2->area[1][0] = 1;
+
+// simuliraj 2 svetova: nakoncu ju primerjaj ce sta koncni stanji stevov isti
+    printf("%4d nit: %10.2f milisekund\n", 1, simulateMax(w1, MAX_ITERATION));
+   	printf("%4d nit: %10.2f milisekund\n", THREADS_COUNT, simulateMaxMulty(w2, THREADS_COUNT, MAX_ITERATION));
+    printf("enako: %d\n", compareWorldAreas(w1, w2));
+
+
+    destroyWorld(w1);
+    destroyWorld(w2);
     return 0;
 }
