@@ -4,5 +4,7 @@
 int     test1();
 void    initInfWorld(world*);
 void    initInf2World(world*);
+void    initWorld(world *w);
+void    countTime();
 
 #endif

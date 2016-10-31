@@ -1,10 +1,10 @@
 #ifndef _WORLD_H_
 #define _WORLD_H_
 
-#define WORLD_SIZE_HEIGHT 111
-#define WORLD_SIZE_WIDTH 111
+#define WORLD_SIZE_HEIGHT 120
+#define WORLD_SIZE_WIDTH 120
 
-#define MAX_ITERATION 1000
+#define MAX_ITERATION 500
 #define THREADS_COUNT 6
 
 typedef struct {

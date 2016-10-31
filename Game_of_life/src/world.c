@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <pthread.h>
-#include </home/matej/Desktop/PS/git.tmp/heads/world.h>
+#include "../heads/world.h"
 
 /*
 	Kreiraj nov svet(visina, sirina):
