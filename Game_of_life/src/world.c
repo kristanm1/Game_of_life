@@ -22,9 +22,9 @@ world* createWorld(int size_x, int size_y) {
 }
 
 /*
-	Metoda presteje zive sosede celice(i, j) v svetu w
+	Metoda presteje zive sosede celice(i, j) v svetu w po Moorovem pravilu 3x3
 */
-int numOfNeighbors(int i, int j, world *w) {
+int numOfNeighbors_Moore_3x3(int i, int j, world *w) {
     int n, m, num_of_neighbors = 0;
     for(n = -1; n < 2; n++) {
         for(m = -1; m < 2; m++) {
@@ -37,6 +37,58 @@ int numOfNeighbors(int i, int j, world *w) {
         }
     }
     return num_of_neighbors;
+}
+
+void cell_destiny_3x3(int i, int j, world *w, int *area) {
+    int non = numOfNeighbors_Moore_3x3(i, j, w);
+    if(w->area[i][j] > 0) {
+        if(non == 2 || non == 3) {
+            area[j] = 1;
+        }
+        else {
+            area[j] = 0;
+        }
+    }
+    else {
+        if(non == 3) {
+            area[j] = 1;
+        }
+    }
+}
+
+/*
+	Metoda presteje zive sosede celice(i, j) v svetu w po Moorovem pravilu 5x5
+*/
+int numOfNeighbors_Moore_5x5(int i, int j, world *w) {
+    int n, m, num_of_neighbors = 0;
+    for(n = -2; n < 3; n++) {
+        for(m = -2; m < 3; m++) {
+            if(n == 0 && m == 0) continue;
+            if((i + n) >= 0 && (i + n) < w->height && (j + m) >= 0 && (j + m) < w->width) {
+                if(w->area[i+n][j+m] > 0) {
+                    num_of_neighbors++;
+                }
+            }
+        }
+    }
+    return num_of_neighbors;
+}
+
+void cell_destiny_5x5(int i, int j, world *w, int *area) {
+    int non = numOfNeighbors_Moore_5x5(i, j, w); 
+    if(w->area[i][j] > 0) {
+        if(non == 3) {
+            area[j] = 1;
+        }
+        else {
+            area[j] = 0;
+        }
+    }
+    else {
+        if(non == 4) {
+            area[j] = 1;
+        }
+    }
 }
 
 /*
@@ -66,24 +118,11 @@ int** createNewArea(int height, int width) {
 	Simulira eno generacijo sveta na eni niti
 */
 void simulateOneCicle(world *w) {
-    int i, j, non, **area = (int**) malloc(sizeof(int*) * w->height);
+    int i, j, **area = (int**) malloc(sizeof(int*) * w->height);
     for(i = 0; i < w->height; i++) {
         area[i] = (int*) calloc(sizeof(int), w->width);
         for(j = 0; j < w->width; j++) {
-            non = numOfNeighbors(i, j, w);
-            if(w->area[i][j] > 0) {
-                if(non == 2 || non == 3) {
-                    area[i][j] = 1;
-                }
-                else {
-                    area[i][j] = 0;
-                }
-            }
-            else {
-                if(non == 3) {
-                    area[i][j] = 1;
-                }
-            }
+            cell_destiny_3x3(i, j, w, area[i]);
         }
     }
     addNewArea(w, area);
@@ -132,7 +171,6 @@ void printWorld(world *w) {
 
 /*
 	Simulira v neskoncno z izpisom v konzolo na eni niti
-		-exit = ctrl + c
 */
 void simulate(world *w) {
     while(1) {
@@ -142,7 +180,7 @@ void simulate(world *w) {
 }
 
 /*
-	Simulira max generacij na eni niti in vrne long long v milisekundah porabljenega casa
+	Simulira max generacij na eni niti in vrne double v milisekundah porabljenega casa
 */
 double simulateMax(world *w, int max) {
 	struct timeval t1, t2;
@@ -159,27 +197,14 @@ double simulateMax(world *w, int max) {
 
 /*
 	Funkcija ki jo izvaja nit
+		--non...number of neightbors
 */
 void* doSomething(void *arg) {
 	param *p = (param*) arg;
 	int i, j, non;
-	world *w = p->w;
     for(i = p->min; i < p->max; i++) {
-        for(j = 0; j < w->width; j++) {
-            non = numOfNeighbors(i, j, w);
-            if(w->area[i][j] > 0) {
-                if(non == 2 || non == 3) {
-                    p->area[i][j] = 1;
-                }
-                else {
-                    p->area[i][j] = 0;
-                }
-            }
-            else {
-                if(non == 3) {
-                    p->area[i][j] = 1;
-                }
-            }
+        for(j = 0; j < p->w->width; j++) {
+            cell_destiny_3x3(i, j, p->w, p->area[i]);          
         }
     }
 	return NULL;	

@@ -15,21 +15,22 @@ void SDL_Simulate_Game_of_Life() {
     world *w = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
     initInfWorld(w);
     initSDL(w);
-    while(1) {
+    int run = 1;
+    while(run) {
         while(!SDL_PollEvent(event)) {
             render(w);
-            SDL_Delay(40);
+            SDL_Delay(60);
             //simulateOneCicle(w);
             simulateMultyOneCicle(w, THREADS_COUNT);
         }
         //ce je bila tipka q pritisnjena koncaj program....
         if(event->key.keysym.sym == SDLK_q) {
-            destroySDL();
-            destroyWorld(w);
             printf("Exited by keyboard input!!!\n");
-            exit(0);
+            run = 0;
         }
     }
+    destroySDL();
+    destroyWorld(w);
 }
 
 /*

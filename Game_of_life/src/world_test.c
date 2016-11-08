@@ -1,43 +1,67 @@
 #include <SDL2/SDL.h>
+#include <stdlib.h>
+#include <math.h>
 #include "../heads/world.h"
 #include "../heads/world_graphics.h"
 #include "../heads/world_test.h"
 
-int test1() {
-    world *w1, *w2;
-    w1 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
-    w2 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
-    initInfWorld(w1);
-    initInfWorld(w2);
-    
+#define TEST_COUNT 3
+#define START_ITER 1000
+#define DELTA_ITER 500
+#define TEST_HEIGHT 100
+#define TEST_WIDTH 250
+
+double SE(casovna_t *c) {
+    double s = 0.0, sum = 0.0;
     int i;
-    for(i = 0; i < 500; i++) {
-        simulateOneCicle(w1);
-        simulateMultyOneCicle(w2, THREADS_COUNT);
-        if(compareWorldAreas(w1, w2) != 1) {
-            return 0;
-        }
+    for(i = 0; i < c->len; i++) {
+        sum += (c->tab[i] - c->povp) * (c->tab[i] - c->povp);
     }
-
-    destroyWorld(w1);
-    destroyWorld(w2);
-    return 1;
+    s = sum/(c->len - 1);
+    return sqrt(s)/sqrt(c->len);
 }
 
-/*
-    Stopa cas na eni niti in na THREADS_COUNT nitih
-*/
-void countTime() {
-// simuliraj 2 svetova: nakoncu ju primerjaj ce sta koncni stanji svetov enaki
-    world *w1, *w2;
-    w1 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
-    w2 = createWorld(WORLD_SIZE_HEIGHT, WORLD_SIZE_WIDTH);
-    printf("%4d nit: %10.2f milisekund\n", 1, simulateMax(w1, MAX_ITERATION));
-    printf("%4d nit: %10.2f milisekund\n", THREADS_COUNT, simulateMaxMulty(w2, THREADS_COUNT, MAX_ITERATION));
-    printf("enako(1=true, 0=false): %d\n", compareWorldAreas(w1, w2));
-    destroyWorld(w1);
-    destroyWorld(w2);
+casovna_t* casovna_analiza_1_nit(int n, int visina, int sirina, int st_iteracij, int DEBUG) {
+    casovna_t* ct = malloc(sizeof(casovna_t));
+    world *w = createWorld(visina, sirina);
+    ct->tab = malloc(sizeof(double)*n);
+    int i;
+    double sum_time = 0, tmp_time;
+    if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: 1 NIT---\n", visina, sirina, st_iteracij);
+    for(i = 0; i < n; i++) {
+        tmp_time = simulateMax(w, st_iteracij);
+        if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
+        ct->tab[i] = tmp_time;
+        sum_time += tmp_time;
+    }
+    ct->sum = sum_time;
+    sum_time /= n;
+    ct->povp = sum_time;
+    ct->len = n;
+    if(DEBUG) printf("povprecen cas: %.2f ms\n", sum_time);
+    return ct;
 }
+
+casovna_t* casovna_analiza_vec_niti(int n, int visina, int sirina, int st_iteracij, int st_niti, int DEBUG) {
+    casovna_t* ct = malloc(sizeof(casovna_t));
+    world *w = createWorld(visina, sirina);
+    ct->tab = malloc(sizeof(double)*n);
+    int i;
+    double sum_time = 0, tmp_time;
+    if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d NITI---\n", visina, sirina, st_iteracij, st_niti);
+    for(i = 0; i < n; i++) {
+        tmp_time = simulateMaxMulty(w, st_niti, st_iteracij);
+        if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
+        ct->tab[i] = tmp_time;
+        sum_time += tmp_time;
+    }
+    ct->sum = sum_time;
+    sum_time /= n;
+    ct->povp = sum_time;
+    if(DEBUG) printf("povprecen cas: %.2f ms\n", sum_time);
+    return ct;
+}
+
 
 void initWorld(world *w) {
     w->area[15][2] = 1;
