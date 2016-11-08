@@ -11,14 +11,16 @@
 #define TEST_HEIGHT 100
 #define TEST_WIDTH 250
 
-double SE(casovna_t *c) {
+double SE(casovna_t *c, int DEBUG) {
     double s = 0.0, sum = 0.0;
     int i;
     for(i = 0; i < c->len; i++) {
         sum += (c->tab[i] - c->povp) * (c->tab[i] - c->povp);
     }
     s = sum/(c->len - 1);
-    return sqrt(s)/sqrt(c->len);
+    s = sqrt(s)/sqrt(c->len);
+    if(DEBUG) printf("---SE: %f\n", s);
+    return s;
 }
 
 casovna_t* casovna_analiza_1_nit(int n, int visina, int sirina, int st_iteracij, int DEBUG) {
@@ -38,7 +40,7 @@ casovna_t* casovna_analiza_1_nit(int n, int visina, int sirina, int st_iteracij,
     sum_time /= n;
     ct->povp = sum_time;
     ct->len = n;
-    if(DEBUG) printf("povprecen cas: %.2f ms\n", sum_time);
+    if(DEBUG) printf("povprecen cas: %.4f ms\n", sum_time);
     return ct;
 }
 
@@ -58,7 +60,7 @@ casovna_t* casovna_analiza_vec_niti(int n, int visina, int sirina, int st_iterac
     ct->sum = sum_time;
     sum_time /= n;
     ct->povp = sum_time;
-    if(DEBUG) printf("povprecen cas: %.2f ms\n", sum_time);
+    if(DEBUG) printf("povprecen cas: %.4f ms\n", sum_time);
     return ct;
 }
 
