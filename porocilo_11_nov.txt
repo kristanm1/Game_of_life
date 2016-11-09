@@ -27,6 +27,8 @@ Nekaj meritev:
 --s...sirina
 --st_iteracij...stevilo simuliranih generacij
 
+	--vsi podatki so povprecni casi iz 10-ih meritev =>
+
 	klic programa: (octave):
 		prvi argument: x koordinate(stolpec)
 		drugi argument: y koordinate(stolpec)
@@ -46,6 +48,7 @@ Nekaj meritev:
 			[639.5781 743.3706 856.3163 983.0072 1110.5553 1255.3377]',
 			model, 2)
 		---y = 8.4231e+00 + 4.9223e-05 * x:(funkcija po metodi najmanjsih kvadratov)
+		---y = 8.4231 + 0.000049223 * x
 
 
 	x:		 	y:
@@ -60,6 +63,7 @@ Nekaj meritev:
 			[632.2506 756.2031 880.0732 1023.9427 1147.7905 1287.6977]',
 			model, 2)
 		---y = -3.0169e+01 + 5.2524e-05 * x:(funkcija po metodi najmanjsih kvadratov)
+		---y = -30.169 + 0.000052524 * x
 
 	x:	 		y:
 	12500000(500, 500, 50)	611.2418	SE:2.314064
@@ -73,7 +77,7 @@ Nekaj meritev:
 			[611.2418 730.1992 851.6333  976.4162 1094.0104 1237.4870]',
 			model, 2)
 		---y = -1.4764e+01 + 4.9685e-05 * x:(funkcija po metodi najmanjsih kvadratov)
-
+		---y = -10.4764 + 0.000049685 * x
 
 
 	
