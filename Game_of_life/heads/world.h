@@ -21,23 +21,25 @@ world* 	createWorld(int, int);
 void 	destroyWorld(world*);
 void 	printWorld(world*);
 void 	addNewArea(world*, int**);
-void 	addNewArea2(world*, int**);
-void	setToZeros(int**, int, int);
 int** 	createNewArea(int , int);
 int 	compareWorldAreas(world*, world*);
-int 	numOfNeighbors_Moore_3x3(int, int, world*);
+
 void 	cell_destiny_3x3(int, int, world*, int*);
-int 	numOfNeighbors_Moore_5x5(int, int, world*);
 void 	cell_destiny_5x5(int, int, world*, int*);
-void 	simulateOneCicle(world*);
-void 	simulateMultyOneCicle(world*, int);
-double	simulateMaxMulty2(world*, int , int);
+
+int 	numOfNeighbors_Moore_3x3(int, int, world*);
+int 	numOfNeighbors_Moore_5x5(int, int, world*);
+
 void 	simulate(world*);
-void 	simulateMulty(world*, int);
+void 	simulateOneCicle(world*);
 double  simulateMax(world*, int);
-double 	simulateMaxMulty(world*, int, int);
 
 void*   doSomething(void*);
+void 	simulateMulty(world*, int);
+void 	simulateMultyOneCicle(world*, int);
+double 	simulateMaxMulty(world*, int, int);
+
 void*	doSomething2(void *arg);
+double	simulateMaxMulty2(world*, int , int);
 
 #endif

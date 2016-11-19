@@ -9,10 +9,12 @@ typedef struct {
 void        initInfWorld(world*);
 void        initInf2World(world*);
 void        initWorld(world*);
-void        initTest(world *w);
+void        initTest(world*);
+
 double      SE(casovna_t*, int);
+
 casovna_t*  casovna_analiza_1_nit(int, int, int, int, int);
 casovna_t*  casovna_analiza_vec_niti(int, int, int, int, int, int);
-casovna_t*  casovna_analiza_vec_niti2(int n, int visina, int sirina, int st_iteracij, int st_niti, int DEBUG);
+casovna_t*  casovna_analiza_vec_niti2(int, int, int, int, int, int);
 
 #endif

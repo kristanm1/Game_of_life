@@ -7,6 +7,7 @@
 int     initSDL(world*);
 void    destroySDL();
 void    render(world*);
+
 void    SDL_Simulate_Game_of_Life();
 
 #endif

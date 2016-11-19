@@ -57,7 +57,6 @@ casovna_t* casovna_analiza_vec_niti(int n, int visina, int sirina, int st_iterac
     if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d NITI---\n", visina, sirina, st_iteracij, st_niti);
     for(i = 0; i < n; i++) {
         tmp_time = simulateMaxMulty(w, st_niti, st_iteracij);
-        //tmp_time = simulateMaxMulty2(w, st_niti, st_iteracij);
         if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
         ct->tab[i] = tmp_time;
         sum_time += tmp_time;
@@ -80,12 +79,13 @@ casovna_t* casovna_analiza_vec_niti2(int n, int visina, int sirina, int st_itera
     world *w = createWorld(visina, sirina);
     //initTest(w);
     //printWorld(w);
+
+    if(DEBUG) {printf("multy2:\n");}
     ct->tab = malloc(sizeof(double)*n);
     int i;
     double sum_time = 0, tmp_time;
     if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d NITI---\n", visina, sirina, st_iteracij, st_niti);
     for(i = 0; i < n; i++) {
-        //tmp_time = simulateMaxMulty(w, st_niti, st_iteracij);
         tmp_time = simulateMaxMulty2(w, st_niti, st_iteracij);
         //printWorld(w);
         if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);

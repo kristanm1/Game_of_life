@@ -104,24 +104,6 @@ void addNewArea(world *w, int **area) {
     w->area = area;
 }
 
-void copyArea(world *w, int **area) {
-    int i, j;
-    for(i = 0; i < w->height; i++) {
-        for(j = 0; j < w->width; j++) {
-            w->area[i][j] = area[i][j];
-        }
-    }
-}
-
-void setToZeros(int** t, int iMax, int jMax) {
-    int i, j;
-    for(i = 0; i < iMax ;i++) {
-        for(j = 0; j < jMax; j++) {
-            t[i][j] = 0;
-        }
-    }
-}
-
 /*
 	Vrne novo polje velikosti height x width
 */
@@ -308,9 +290,7 @@ void* doSomething2(void *arg) {
                 free(p->w->area[m]);
                 p->w->area[m] = tmpArea[m];
                 tmpArea[m] = calloc(sizeof(int), p->w->width);
-
             }
-            //copyArea(p->w, tmpArea);
         }   
         pthread_barrier_wait(p->barrier);
     }
