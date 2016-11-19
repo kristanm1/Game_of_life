@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <omp.h>
 #include "../heads/world.h"
 
 /*
@@ -103,6 +104,24 @@ void addNewArea(world *w, int **area) {
     w->area = area;
 }
 
+void copyArea(world *w, int **area) {
+    int i, j;
+    for(i = 0; i < w->height; i++) {
+        for(j = 0; j < w->width; j++) {
+            w->area[i][j] = area[i][j];
+        }
+    }
+}
+
+void setToZeros(int** t, int iMax, int jMax) {
+    int i, j;
+    for(i = 0; i < iMax ;i++) {
+        for(j = 0; j < jMax; j++) {
+            t[i][j] = 0;
+        }
+    }
+}
+
 /*
 	Vrne novo polje velikosti height x width
 */
@@ -197,7 +216,6 @@ double simulateMax(world *w, int max) {
 
 /*
 	Funkcija ki jo izvaja nit
-		--non...number of neightbors
 */
 void* doSomething(void *arg) {
 	param *p = (param*) arg;
@@ -211,7 +229,8 @@ void* doSomething(void *arg) {
 }
 
 /*
-	Simulira eno generacijo sveta na threadCount nitih
+	Simulira eno generacijo sveta na threadCount nitih in za vsako
+    generacijo naredi niti in nakoncu jih 'pobije'
 */
 void simulateMultyOneCicle(world *w, int threadCount) {
 	pthread_t t[threadCount];
@@ -219,7 +238,7 @@ void simulateMultyOneCicle(world *w, int threadCount) {
 	int **newArea = createNewArea(w->height, w->width), i, min = 0, max, delta = w->height/threadCount + 1;
 	for(i = 0; i < threadCount; i++) {
 		max = min + delta;
-		if(min >= w->height && max > w->height) {
+		if(min >= w->height) {
 			min = w->height;
 			max = w->height;
 		}
@@ -265,4 +284,86 @@ void simulateMulty(world *w, int threadCount) {
 		sleep(2.0);
 		printWorld(w);
 	}
+}
+
+/*
+	Funkcija ki jo izvaja nit
+*/
+//polje v katerega pisejo vse niti, vsaka v svoje obmocje: [min, max]
+static int **tmpArea;
+
+void* doSomething2(void *arg) {
+	param *p = (param*) arg;
+	int i, j, k, non;
+    for(k = 0; k < p->num_iter; k++) {
+        for(i = p->min; i < p->max; i++) {
+            for(j = 0; j < p->w->width; j++) {
+                cell_destiny_3x3(i, j, p->w, tmpArea[i]);          
+            }
+        }
+        pthread_barrier_wait(p->barrier);
+        if(p->min == 0) {
+            int m;
+            for(m = 0; m < p->w->height; m++) {
+                free(p->w->area[m]);
+                p->w->area[m] = tmpArea[m];
+                tmpArea[m] = calloc(sizeof(int), p->w->width);
+
+            }
+            //copyArea(p->w, tmpArea);
+        }   
+        pthread_barrier_wait(p->barrier);
+    }
+	return NULL;
+}
+
+/*
+	Simulira max generacij na threadCount nitih in vrne double v milisekundah porabljenega casa
+*/
+double simulateMaxMulty2(world *w, int threadCount, int max) {
+
+    struct timeval t1, t2;
+
+    pthread_t t[threadCount];
+    param p[threadCount];
+
+    pthread_barrier_t barrier;
+    pthread_barrier_init(&barrier, NULL, threadCount);
+
+    tmpArea = createNewArea(w->height, w->width);
+    int i, min_t = 0, max_t, delta = w->height/threadCount + 1;
+
+    gettimeofday(&t1, NULL);
+    //printf("st.niti:%d, visina sveta:%d\n", threadCount, w->height);
+	for(i = 0; i < threadCount; i++) {
+		max_t = min_t + delta;
+		if(min_t >= w->height) {
+			min_t = w->height;
+			max_t = w->height;
+		}
+		else if(max_t > w->height) {
+			max_t = w->height;
+		}
+		p[i].min = min_t;
+		p[i].max = max_t;
+		p[i].area = tmpArea;
+		p[i].w = w;
+        p[i].barrier = &barrier;
+        p[i].num_iter = max;
+        //printf("%d, %d\n", min_t, max_t);
+		pthread_create(&t[i], NULL, doSomething2, (void*) &p[i]);
+		min_t += delta;
+	}
+    //printf("-----------------------\n");
+	for(i = 0; i < threadCount; i++) {
+		pthread_join(t[i], NULL);
+	}
+
+    pthread_barrier_destroy(&barrier);
+
+    gettimeofday(&t2, NULL);
+	double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
+	time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+
+    return time_elapsed;
 }

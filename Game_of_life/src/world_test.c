@@ -40,7 +40,11 @@ casovna_t* casovna_analiza_1_nit(int n, int visina, int sirina, int st_iteracij,
     sum_time /= n;
     ct->povp = sum_time;
     ct->len = n;
-    if(DEBUG) printf("povprecen cas: %.4f ms\n", sum_time);
+    if(DEBUG) {
+        printf("povprecen cas: %.4f ms\n", sum_time);
+        printf("standard error: %.4f ms\n", SE(ct, 0));
+        printf("\n\n");
+    }
     return ct;
 }
 
@@ -53,6 +57,7 @@ casovna_t* casovna_analiza_vec_niti(int n, int visina, int sirina, int st_iterac
     if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d NITI---\n", visina, sirina, st_iteracij, st_niti);
     for(i = 0; i < n; i++) {
         tmp_time = simulateMaxMulty(w, st_niti, st_iteracij);
+        //tmp_time = simulateMaxMulty2(w, st_niti, st_iteracij);
         if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
         ct->tab[i] = tmp_time;
         sum_time += tmp_time;
@@ -60,10 +65,55 @@ casovna_t* casovna_analiza_vec_niti(int n, int visina, int sirina, int st_iterac
     ct->sum = sum_time;
     sum_time /= n;
     ct->povp = sum_time;
-    if(DEBUG) printf("povprecen cas: %.4f ms\n", sum_time);
+    ct->len = n;
+    if(DEBUG) {
+        printf("povprecen cas: %.4f ms\n", sum_time);
+        //printf("casovna_t:%p tab:%p len:%d\n", ct, ct->tab, ct->len);
+        printf("standard error: %.4f ms\n", SE(ct, 0));
+        printf("\n\n");
+    }
     return ct;
 }
 
+casovna_t* casovna_analiza_vec_niti2(int n, int visina, int sirina, int st_iteracij, int st_niti, int DEBUG) {
+    casovna_t* ct = malloc(sizeof(casovna_t));
+    world *w = createWorld(visina, sirina);
+    //initTest(w);
+    //printWorld(w);
+    ct->tab = malloc(sizeof(double)*n);
+    int i;
+    double sum_time = 0, tmp_time;
+    if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d NITI---\n", visina, sirina, st_iteracij, st_niti);
+    for(i = 0; i < n; i++) {
+        //tmp_time = simulateMaxMulty(w, st_niti, st_iteracij);
+        tmp_time = simulateMaxMulty2(w, st_niti, st_iteracij);
+        //printWorld(w);
+        if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
+        ct->tab[i] = tmp_time;
+        sum_time += tmp_time;
+    }
+    ct->sum = sum_time;
+    sum_time /= n;
+    ct->povp = sum_time;
+    ct->len = n;
+    if(DEBUG) {
+        printf("povprecen cas: %.4f ms\n", sum_time);
+        //printf("casovna_t:%p tab:%p len:%d\n", ct, ct->tab, ct->len);
+        printf("standard error: %.4f ms\n", SE(ct, 0));
+        printf("\n\n");
+    }
+    return ct;
+}
+
+void initTest(world *w) {
+    w->area[5][3] = 1;
+    w->area[4][4] = 1;
+    w->area[3][4] = 1;
+    w->area[3][2] = 1;
+    w->area[2][4] = 1;
+    w->area[1][3] = 1;
+    w->area[3][5] = 1;
+}
 
 void initWorld(world *w) {
     w->area[15][2] = 1;

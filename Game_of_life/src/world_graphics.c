@@ -20,8 +20,9 @@ void SDL_Simulate_Game_of_Life() {
         while(!SDL_PollEvent(event)) {
             render(w);
             SDL_Delay(60);
-            simulateOneCicle(w);
+            //simulateOneCicle(w);
             //simulateMultyOneCicle(w, THREADS_COUNT);
+            simulateMaxMulty2(w, THREADS_COUNT, 1);
         }
         //ce je bila tipka q pritisnjena koncaj program....
         if(event->key.keysym.sym == SDLK_q) {
