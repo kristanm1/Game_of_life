@@ -1,0 +1,65 @@
+vse meritve so bile 10x ponovljene!
+
+---v:100, s:100, st_iteracij:2000 :: 1 NIT---
+povprecen cas: 2378.7289 ms
+standard error: 3.6581 ms
+
+---v:100, s:100, st_iteracij:3000 :: 1 NIT---
+povprecen cas: 3558.1211 ms
+standard error: 2.1531 ms
+
+---v:100, s:100, st_iteracij:4000 :: 1 NIT---
+povprecen cas: 4741.9400 ms
+standard error: 2.0803 ms
+
+---v:100, s:100, st_iteracij:5000 :: 1 NIT---
+povprecen cas: 5940.9955 ms
+standard error: 4.3974 ms
+
+funkcija: 2.2983e-01   1.1871e-04
+
+-------------------------------------------------------------------
+(vsako iteracijo kreiramo niti in jih na koncu generacije pobijemo)
+
+---v:100, s:100, st_iteracij:2000 ::   2 NITI---
+povprecen cas: 1453.5480 ms
+standard error: 5.4883 ms
+
+---v:100, s:100, st_iteracij:3000 ::   2 NITI---
+povprecen cas: 2180.8337 ms
+standard error: 7.9715 ms
+
+---v:100, s:100, st_iteracij:4000 ::   2 NITI---
+povprecen cas: 2888.9453 ms
+standard error: 7.4877 ms
+
+---v:100, s:100, st_iteracij:5000 ::   2 NITI---
+povprecen cas: 3813.9365 ms
+standard error: 11.0450 ms
+
+funkcija: -1.4193e+02   7.7893e-05
+
+-------------------------------------------------------------------
+(samo 1x na zacetku naredimo niti in simuliramo n generacij)
+
+multy2:
+---v:100, s:100, st_iteracij:2000 ::   2 NITI---
+povprecen cas: 1455.5712 ms
+standard error: 18.5729 ms
+
+multy2:
+---v:100, s:100, st_iteracij:3000 ::   2 NITI---
+povprecen cas: 2157.2261 ms
+standard error: 5.8674 ms
+
+multy2:
+---v:100, s:100, st_iteracij:4000 ::   2 NITI---
+povprecen cas: 2790.8168 ms
+standard error: 34.9464 ms
+
+multy2:
+---v:100, s:100, st_iteracij:5000 ::   2 NITI---
+povprecen cas: 3384.0529 ms
+standard error: 1.8646 ms
+
+funkcija:   2.0025e+02   6.4190e-05

@@ -123,7 +123,7 @@ void simulateOneCicle(world *w) {
     for(i = 0; i < w->height; i++) {
         area[i] = (int*) calloc(sizeof(int), w->width);
         for(j = 0; j < w->width; j++) {
-            cell_destiny_3x3(i, j, w, area[i]);
+            cell_destiny_5x5(i, j, w, area[i]);
         }
     }
     addNewArea(w, area);
@@ -204,7 +204,7 @@ void* doSomething(void *arg) {
 	int i, j, non;
     for(i = p->min; i < p->max; i++) {
         for(j = 0; j < p->w->width; j++) {
-            cell_destiny_3x3(i, j, p->w, p->area[i]);          
+            cell_destiny_5x5(i, j, p->w, p->area[i]);          
         }
     }
 	return NULL;	
@@ -273,6 +273,7 @@ void simulateMulty(world *w, int threadCount) {
 */
 //polje v katerega pisejo vse niti, vsaka v svoje obmocje: [min, max]
 static int **tmpArea;
+static pthread_barrier_t barrierMove;
 
 void* doSomething2(void *arg) {
 	param *p = (param*) arg;
@@ -280,7 +281,7 @@ void* doSomething2(void *arg) {
     for(k = 0; k < p->num_iter; k++) {
         for(i = p->min; i < p->max; i++) {
             for(j = 0; j < p->w->width; j++) {
-                cell_destiny_3x3(i, j, p->w, tmpArea[i]);          
+                cell_destiny_5x5(i, j, p->w, tmpArea[i]);          
             }
         }
         pthread_barrier_wait(p->barrier);
@@ -292,7 +293,8 @@ void* doSomething2(void *arg) {
                 tmpArea[m] = calloc(sizeof(int), p->w->width);
             }
         }   
-        pthread_barrier_wait(p->barrier);
+        pthread_barrier_wait(&barrierMove);
+        //pthread_barrier_wait(p->barrier);
     }
 	return NULL;
 }
@@ -309,7 +311,7 @@ double simulateMaxMulty2(world *w, int threadCount, int max) {
 
     pthread_barrier_t barrier;
     pthread_barrier_init(&barrier, NULL, threadCount);
-
+    pthread_barrier_init(&barrierMove, NULL, threadCount);
     tmpArea = createNewArea(w->height, w->width);
     int i, min_t = 0, max_t, delta = w->height/threadCount + 1;
 
@@ -334,16 +336,20 @@ double simulateMaxMulty2(world *w, int threadCount, int max) {
 		pthread_create(&t[i], NULL, doSomething2, (void*) &p[i]);
 		min_t += delta;
 	}
+
     //printf("-----------------------\n");
 	for(i = 0; i < threadCount; i++) {
 		pthread_join(t[i], NULL);
 	}
 
-    pthread_barrier_destroy(&barrier);
-
     gettimeofday(&t2, NULL);
 	double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
 	time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+
+    pthread_barrier_destroy(&barrier);
+    pthread_barrier_destroy(&barrierMove);
+
+    
 
     return time_elapsed;
 }

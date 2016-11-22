@@ -4,6 +4,8 @@
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 1000
 
+#define THREADS_COUNT 8
+
 int     initSDL(world*);
 void    destroySDL();
 void    render(world*);

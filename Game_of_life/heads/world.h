@@ -5,7 +5,6 @@
 #define WORLD_SIZE_WIDTH 115
 
 #define MAX_ITERATION 500
-#define THREADS_COUNT 8
 
 typedef struct {
     int width, height, **area;

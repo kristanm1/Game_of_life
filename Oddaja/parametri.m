@@ -24,13 +24,10 @@ function p = parametri(x, y, model, k)
 	for i = 1:k
 		A = [A model(I(i,:), x)];
 	end
-	
 	p = (pinv(A)*y)';
 	%p = ((((A'*A)^-1)*A')*y)';
 	%p = (A'*A) \ (A'*y);
 	%p = (A\y)';
-	
-
 	%a)
 %		printf("a)\t\n");
 %		printf("-- F(2030) = %f\t\n", model(p, 2030));
