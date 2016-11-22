@@ -285,16 +285,14 @@ void* doSomething2(void *arg) {
             }
         }
         pthread_barrier_wait(p->barrier);
-        if(p->min == 0) {
-            int m;
-            for(m = 0; m < p->w->height; m++) {
-                free(p->w->area[m]);
-                p->w->area[m] = tmpArea[m];
-                tmpArea[m] = calloc(sizeof(int), p->w->width);
-            }
-        }   
+        int m;
+        for(m = p->min; m < p->max; m++) {
+            free(p->w->area[m]);
+            p->w->area[m] = tmpArea[m];
+            tmpArea[m] = calloc(sizeof(int), p->w->width);
+        }  
         pthread_barrier_wait(&barrierMove);
-        //pthread_barrier_wait(p->barrier);
+        
     }
 	return NULL;
 }

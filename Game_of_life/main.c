@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     //casovna_analiza_1_nit       (10, 100, 100, 4000, 1);
     //casovna_analiza_1_nit       (10, 100, 100, 5000, 1);
 
-    //casovna_analiza_vec_niti    (10, 100, 100, 2000, 2, 1);
+    //casovna_analiza_vec_niti    (20, 100, 100, 2000, 2, 1);
     //casovna_analiza_vec_niti    (10, 100, 100, 3000, 2, 1);
     //casovna_analiza_vec_niti    (10, 100, 100, 4000, 2, 1);
     //casovna_analiza_vec_niti    (10, 100, 100, 5000, 2, 1);
