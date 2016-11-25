@@ -1,65 +1,216 @@
-vse meritve so bile 10x ponovljene!
+---v:100, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 122.7887 ms
+standard error: 2.6886 ms
 
----v:100, s:100, st_iteracij:2000 :: 1 NIT---
-povprecen cas: 2378.7289 ms
-standard error: 3.6581 ms
+---v:100, s:100, st_iteracij:200 :: 1 NIT---
+povprecen cas: 239.1517 ms
+standard error: 0.6023 ms
 
----v:100, s:100, st_iteracij:3000 :: 1 NIT---
-povprecen cas: 3558.1211 ms
-standard error: 2.1531 ms
+---v:100, s:100, st_iteracij:400 :: 1 NIT---
+povprecen cas: 474.4584 ms
+standard error: 0.2652 ms
 
----v:100, s:100, st_iteracij:4000 :: 1 NIT---
-povprecen cas: 4741.9400 ms
-standard error: 2.0803 ms
+---v:100, s:100, st_iteracij:800 :: 1 NIT---
+povprecen cas: 948.4117 ms
+standard error: 0.5283 ms
 
----v:100, s:100, st_iteracij:5000 :: 1 NIT---
-povprecen cas: 5940.9955 ms
-standard error: 4.3974 ms
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [122.7887, 239.1517, 474.4584, 948.4117]'
+y(x) = 3.6139e+00 + 1.1802e-04 * x
+---
 
-funkcija: 2.2983e-01   1.1871e-04
+/////////////////////////////////////////////////////////////////////////
 
--------------------------------------------------------------------
-(vsako iteracijo kreiramo niti in jih na koncu generacije pobijemo)
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 74.8956 ms
+standard error: 1.1255 ms
 
----v:100, s:100, st_iteracij:2000 ::   2 NITI---
-povprecen cas: 1453.5480 ms
-standard error: 5.4883 ms
+---v:100, s:100, st_iteracij:200 ::   2 NITI---
+povprecen cas: 143.7474 ms
+standard error: 0.8951 ms
 
----v:100, s:100, st_iteracij:3000 ::   2 NITI---
-povprecen cas: 2180.8337 ms
-standard error: 7.9715 ms
+---v:100, s:100, st_iteracij:400 ::   2 NITI---
+povprecen cas: 289.0660 ms
+standard error: 1.1545 ms
 
----v:100, s:100, st_iteracij:4000 ::   2 NITI---
-povprecen cas: 2888.9453 ms
-standard error: 7.4877 ms
+---v:100, s:100, st_iteracij:800 ::   2 NITI---
+povprecen cas: 570.3503 ms
+standard error: 1.6790 ms
 
----v:100, s:100, st_iteracij:5000 ::   2 NITI---
-povprecen cas: 3813.9365 ms
-standard error: 11.0450 ms
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [74.8956, 143.7474, 289.0660, 570.3503]'
+y(x) = 3.5929e+00 + 7.0913e-05 * x
+---
 
-funkcija: -1.4193e+02   7.7893e-05
-
--------------------------------------------------------------------
-(samo 1x na zacetku naredimo niti in simuliramo n generacij)
-
-multy2:
----v:100, s:100, st_iteracij:2000 ::   2 NITI---
-povprecen cas: 1455.5712 ms
-standard error: 18.5729 ms
+/////////////////////////////////////////////////////////////////////////
 
 multy2:
----v:100, s:100, st_iteracij:3000 ::   2 NITI---
-povprecen cas: 2157.2261 ms
-standard error: 5.8674 ms
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 70.6313 ms
+standard error: 2.1982 ms
 
 multy2:
----v:100, s:100, st_iteracij:4000 ::   2 NITI---
-povprecen cas: 2790.8168 ms
-standard error: 34.9464 ms
+---v:100, s:100, st_iteracij:200 ::   2 NITI---
+povprecen cas: 147.5765 ms
+standard error: 6.4806 ms
 
 multy2:
----v:100, s:100, st_iteracij:5000 ::   2 NITI---
-povprecen cas: 3384.0529 ms
-standard error: 1.8646 ms
+---v:100, s:100, st_iteracij:400 ::   2 NITI---
+povprecen cas: 278.0182 ms
+standard error: 7.3364 ms
 
-funkcija:   2.0025e+02   6.4190e-05
+multy2:
+---v:100, s:100, st_iteracij:800 ::   2 NITI---
+povprecen cas: 588.3889 ms
+standard error: 26.0779 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y=[70.6313, 147.5765, 278.0182, 588.3889]'
+y(x) = -5.0631e+00 + 7.3658e-05 * x
+---
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////---
+
+---v:100, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 122.3245 ms
+standard error: 3.0228 ms
+
+---v:100, s:200, st_iteracij:100 :: 1 NIT---
+povprecen cas: 238.6107 ms
+standard error: 0.8048 ms
+
+---v:100, s:400, st_iteracij:100 :: 1 NIT---
+povprecen cas: 476.8630 ms
+standard error: 2.0269 ms
+
+---v:100, s:800, st_iteracij:100 :: 1 NIT---
+povprecen cas: 956.5746 ms
+standard error: 3.0795 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [122.3245, 238.6107, 476.8630, 956.5746]'
+y(x) = 1.1110e+00 + 1.1933e-04 * x
+---
+
+/////////////////////////////////////////////////////////////////////////
+
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 76.2196 ms
+standard error: 1.7213 ms
+
+---v:100, s:200, st_iteracij:100 ::   2 NITI---
+povprecen cas: 143.9398 ms
+standard error: 0.9307 ms
+
+---v:100, s:400, st_iteracij:100 ::   2 NITI---
+povprecen cas: 280.1154 ms
+standard error: 0.9311 ms
+
+---v:100, s:800, st_iteracij:100 ::   2 NITI---
+povprecen cas: 549.8300 ms
+standard error: 1.2317 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [76.2196, 143.9398, 280.1154, 549.8300]'
+y(x) = 8.7904e+00 + 6.7663e-05 * x
+---
+
+/////////////////////////////////////////////////////////////////////////
+
+multy2:
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 72.3517 ms
+standard error: 2.7190 ms
+
+multy2:
+---v:100, s:200, st_iteracij:100 ::   2 NITI---
+povprecen cas: 135.0592 ms
+standard error: 0.1007 ms
+
+multy2:
+---v:100, s:400, st_iteracij:100 ::   2 NITI---
+povprecen cas: 270.5487 ms
+standard error: 0.3799 ms
+
+multy2:
+---v:100, s:800, st_iteracij:100 ::   2 NITI---
+povprecen cas: 610.8969 ms
+standard error: 20.5491 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [72.3517, 135.0592, 270.5487, 610.8969]'
+y(x) = -1.8477e+01 + 7.7518e-05 * x
+---
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////---
+
+---v:100, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 121.3116 ms
+standard error: 1.9913 ms
+
+---v:200, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 239.5597 ms
+standard error: 0.4752 ms
+
+---v:400, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 477.5898 ms
+standard error: 0.1137 ms
+
+---v:800, s:100, st_iteracij:100 :: 1 NIT---
+povprecen cas: 956.0098 ms
+standard error: 0.4615 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [121.3116, 239.5597, 477.5898, 956.0098]'
+y(x) = 1.2782e+00 + 1.1929e-04 * x
+---
+
+/////////////////////////////////////////////////////////////////////////
+
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 75.5908 ms
+standard error: 1.0291 ms
+
+---v:200, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 142.4814 ms
+standard error: 0.9318 ms
+
+---v:400, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 278.4816 ms
+standard error: 1.0126 ms
+
+---v:800, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 552.8694 ms
+standard error: 3.0239 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [75.5908, 142.4814, 278.4816, 552.8694]'
+y(x) = 6.4299e+00 + 6.8247e-05 * x
+---
+
+/////////////////////////////////////////////////////////////////////////
+
+multy2:
+---v:100, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 75.6012 ms
+standard error: 3.3707 ms
+
+multy2:
+---v:200, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 146.9035 ms
+standard error: 6.7201 ms
+
+multy2:
+---v:400, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 275.6618 ms
+standard error: 7.7907 ms
+
+multy2:
+---v:800, s:100, st_iteracij:100 ::   2 NITI---
+povprecen cas: 533.2712 ms
+standard error: 0.4996 ms
+
+x = [1000000, 2000000, 4000000, 8000000]'
+y = [75.6012, 146.9035, 275.6618, 533.2712]'
+y(x) = 1.3903e+01 + 6.5055e-05 * x
+---
