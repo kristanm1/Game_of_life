@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 #include "../heads/world.h"
 #include "../heads/world_graphics.h"
 #include "../heads/world_test.h"
@@ -32,6 +33,32 @@ casovna_t* casovna_analiza_1_nit(int n, int visina, int sirina, int st_iteracij,
     if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: 1 NIT---\n", visina, sirina, st_iteracij);
     for(i = 0; i < n; i++) {
         tmp_time = simulateMax(w, st_iteracij);
+        if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
+        ct->tab[i] = tmp_time;
+        sum_time += tmp_time;
+    }
+    ct->sum = sum_time;
+    sum_time /= n;
+    ct->povp = sum_time;
+    ct->len = n;
+    if(DEBUG) {
+        printf("povprecen cas: %.4f ms\n", sum_time);
+        printf("standard error: %.4f ms\n", SE(ct, 0));
+        printf("\n\n");
+    }
+    return ct;
+}
+
+casovna_t* casovna_analiza_vec_niti_OMP(int n, int visina, int sirina, int st_iteracij, int st_niti, int DEBUG) {
+    casovna_t* ct = malloc(sizeof(casovna_t));
+    world *w = createWorld(visina, sirina);
+    ct->tab = malloc(sizeof(double)*n);
+    int i;
+    double sum_time = 0, tmp_time;
+    omp_set_num_threads(st_niti);
+    if(DEBUG) printf("---v:%d, s:%d, st_iteracij:%d :: %3d OMP---\n", visina, sirina, st_iteracij, omp_get_num_threads());
+    for(i = 0; i < n; i++) {
+        tmp_time = simulateOMPMax(w, st_iteracij);
         if(DEBUG) printf("cas %3d: %.2f ms\n", i, tmp_time);
         ct->tab[i] = tmp_time;
         sum_time += tmp_time;

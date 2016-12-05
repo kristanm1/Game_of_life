@@ -196,6 +196,30 @@ double simulateMax(world *w, int max) {
 	return time_elapsed;
 }
 
+double simulateOMPMax(world *w, int max) {
+	struct timeval t1, t2;
+	int i;
+	gettimeofday(&t1, NULL);
+	for(i = 0; i < max; i++) {
+        int j, k, **area = (int**) malloc(sizeof(int*) * w->height);
+
+        #pragma omp parallel for shared(area)
+        for(j = 0; j < w->height; j++) {
+            area[j] = (int*) calloc(sizeof(int), w->width);
+            
+            #pragma omp parallel for
+            for(k = 0; k < w->width; k++) {
+                cell_destiny_5x5(j, k, w, area[j]);
+            }
+        }
+        addNewArea(w, area);
+	}
+	gettimeofday(&t2, NULL);
+	double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
+	time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+	return time_elapsed;
+}
+
 /*
 	Funkcija ki jo izvaja nit
 */

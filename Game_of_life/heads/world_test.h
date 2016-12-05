@@ -15,6 +15,7 @@ double      SE(casovna_t*, int);
 
 casovna_t*  casovna_analiza_1_nit(int, int, int, int, int);
 casovna_t*  casovna_analiza_vec_niti(int, int, int, int, int, int);
+casovna_t*  casovna_analiza_vec_niti_OMP(int, int, int, int, int, int);
 casovna_t*  casovna_analiza_vec_niti2(int, int, int, int, int, int);
 
 #endif

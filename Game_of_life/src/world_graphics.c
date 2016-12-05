@@ -22,7 +22,8 @@ void SDL_Simulate_Game_of_Life() {
             SDL_Delay(60);
             //simulateOneCicle(w);
             //simulateMultyOneCicle(w, THREADS_COUNT);
-            simulateMaxMulty2(w, THREADS_COUNT, 1);
+            //simulateMaxMulty2(w, THREADS_COUNT, 1);
+            simulateOMPMax(w, 1);
         }
         //ce je bila tipka q pritisnjena koncaj program....
         if(event->key.keysym.sym == SDLK_q) {

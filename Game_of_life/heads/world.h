@@ -33,6 +33,8 @@ void 	simulate(world*);
 void 	simulateOneCicle(world*);
 double  simulateMax(world*, int);
 
+double simulateOMPMax(world*, int);
+
 void*   doSomething(void*);
 void 	simulateMulty(world*, int);
 void 	simulateMultyOneCicle(world*, int);
