@@ -11,14 +11,9 @@ int main(int argc, char **argv) {
 
 
     //graficna simulacija cellularnega avtomata
-    SDL_Simulate_Game_of_Life();
+    //SDL_Simulate_Game_of_Life();
     
     //printf("threads:%d, procs: %d\n", omp_get_thread_num(), omp_get_num_threads());
-    //casovna_analiza_vec_niti(3, 300, 300, 300, 2, 1);
-    //casovna_analiza_vec_niti2(3, 300, 300, 300, 2, 1);
-    //casovna_analiza_vec_niti_OMP(3, 300, 300, 100, 2, 1);
-    //casovna_analiza_1_nit(3, 300, 300, 300, 1);
-    
 
     
 
@@ -39,6 +34,11 @@ int main(int argc, char **argv) {
     casovna_analiza_vec_niti2   (25, 100, 100, 400, 2, 1);
     casovna_analiza_vec_niti2   (25, 100, 100, 800, 2, 1);
 */
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 200, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 400, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 800, 2, 1);
+
     //------------------------------------------------------------------------------------
 /*
     casovna_analiza_1_nit       (25, 100, 100, 100, 1);
@@ -55,9 +55,15 @@ int main(int argc, char **argv) {
     casovna_analiza_vec_niti2   (25, 100, 200, 100, 2, 1);
     casovna_analiza_vec_niti2   (25, 100, 400, 100, 2, 1);
     casovna_analiza_vec_niti2   (25, 100, 800, 100, 2, 1);
+*/
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 200, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 400, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 100, 800, 100, 2, 1);
 
     //------------------------------------------------------------------------------------
 
+/*
     casovna_analiza_1_nit       (25, 100, 100, 100, 1);
     casovna_analiza_1_nit       (25, 200, 100, 100, 1);
     casovna_analiza_1_nit       (25, 400, 100, 100, 1);
@@ -73,5 +79,10 @@ int main(int argc, char **argv) {
     casovna_analiza_vec_niti2   (25, 400, 100, 100, 2, 1);
     casovna_analiza_vec_niti2   (25, 800, 100, 100, 2, 1);
 */
+    casovna_analiza_vec_niti_OMP(25, 100, 100, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 200, 100, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 400, 100, 100, 2, 1);
+    casovna_analiza_vec_niti_OMP(25, 800, 100, 100, 2, 1);
+
     return 0;
 }

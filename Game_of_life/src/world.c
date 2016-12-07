@@ -203,11 +203,9 @@ double simulateOMPMax(world *w, int max) {
 	for(i = 0; i < max; i++) {
         int j, k, **area = (int**) malloc(sizeof(int*) * w->height);
 
-        #pragma omp parallel for shared(area)
+        #pragma omp parallel for shared(area) private(k)
         for(j = 0; j < w->height; j++) {
             area[j] = (int*) calloc(sizeof(int), w->width);
-            
-            #pragma omp parallel for
             for(k = 0; k < w->width; k++) {
                 cell_destiny_5x5(j, k, w, area[j]);
             }
