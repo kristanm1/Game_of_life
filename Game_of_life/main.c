@@ -30,10 +30,10 @@ int main(int argc, char **argv) {
 */
 
 
-//	casovna_analiza_vec_niti_OMP	(10, 1000, 100, 100, 2, 1);
-//	casovna_analiza_openCL       	(10, 1000, 100, 100, 1);
+//	casovna_analiza_vec_niti_OMP	(10, 800, 100, 100, 2, 1);
+//	casovna_analiza_openCL       	(10, 800, 100, 100, 1);
 
-
+/*
 	casovna_analiza_openCL       	(25, 100, 100, 100, 1);
 	casovna_analiza_openCL       	(25, 200, 100, 100, 1);
 	casovna_analiza_openCL       	(25, 400, 100, 100, 1);
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 	casovna_analiza_openCL       	(25, 100, 100, 200, 1);
 	casovna_analiza_openCL       	(25, 100, 100, 400, 1);
 	casovna_analiza_openCL       	(25, 100, 100, 800, 1);
-
+*/
 
     return 0;
 }
