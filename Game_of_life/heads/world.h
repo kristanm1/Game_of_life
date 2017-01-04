@@ -5,8 +5,8 @@
 #define WORLD_SIZE_WIDTH 150
 #define MAX_ITERATION 500
 
-#define WORKGROUP_SIZE 25
-#define GLOBALITEM_SIZE 100
+#define WORKGROUP_SIZE 8
+#define GLOBALITEM_SIZE 512
 
 typedef struct {
     int width, height, **area;

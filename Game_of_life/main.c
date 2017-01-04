@@ -10,7 +10,7 @@
 int main(int argc, char **argv) {
 
     //graficna simulacija cellularnega avtomata
-    //SDL_Simulate_Game_of_Life();
+    SDL_Simulate_Game_of_Life();
 
     //printf("threads:%d, procs: %d\n", omp_get_thread_num(), omp_get_num_threads());
 
@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
 */
 
 
-//	casovna_analiza_vec_niti_OMP	(10, 800, 100, 100, 2, 1);
-//	casovna_analiza_openCL       	(10, 800, 100, 100, 1);
+//	casovna_analiza_vec_niti_OMP	(2, 800, 800, 100, 2, 1);
+//	casovna_analiza_openCL       	(2, 800, 800, 100, 1);
 
 /*
 	casovna_analiza_openCL       	(25, 100, 100, 100, 1);

@@ -6,8 +6,8 @@ __kernel void simulateOne(	__global float *area,
 
 
 	int non;
-	for(int row = get_global_id(0); row < height; row += get_local_size(0)) {
-		for(int col = get_global_id(1); col < width; col += get_local_size(1)) {
+	for(int row = get_global_id(0); row < height; row += get_global_size(0)) {
+		for(int col = get_global_id(1); col < width; col += get_global_size(1)) {
 
 			non = 0;
 			for(int i = -2; i < 3; i++) {
@@ -21,6 +21,7 @@ __kernel void simulateOne(	__global float *area,
 					}
 				}
 			}
+
 
 			int area_t = area[row*width + col];
 			if(area_t == 0) {
