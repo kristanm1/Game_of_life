@@ -4,7 +4,9 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <omp.h>
+#include <CL/cl.h>
 #include "../heads/world.h"
+#include "../heads/clerrors.h"
 
 /*
 	Kreiraj nov svet(visina, sirina):
@@ -163,7 +165,7 @@ void printWorld(world *w) {
     int i, j;
     for(i = 0; i < w->height; i++) {
         for(j = 0; j < w->width; j++) {
-            printf("%u ", w->area[i][j]);
+            printf("%3u ", w->area[i][j]);
         }
         printf("\n");
     }
@@ -370,6 +372,173 @@ double simulateMaxMulty2(world *w, int threadCount, int max) {
     pthread_barrier_destroy(&barrierMove);
 
     
+
+    return time_elapsed;
+}
+
+char* read_kernel(char* path) {
+    int MAX_SOURCE_SIZE = 1 << 14;
+
+    FILE *fp;
+    char *source_str;
+    size_t source_size;
+
+    fp = fopen(path, "r");
+    source_str = (char*)malloc(MAX_SOURCE_SIZE);
+    source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
+    source_str[source_size] = '\0';
+    fclose(fp);
+    return source_str;
+}
+
+float* mat2vec(world *w) {
+    float *vec = (float*) malloc(sizeof(float)*w->height*w->width);
+    int m = 0, i, j;
+    for(i = 0; i < w->height; i++) {
+        for(j = 0; j < w->width; j++) {
+            vec[m] = (float) w->area[i][j];
+            m++;
+        }
+    }
+    return vec;
+}
+
+int** vec2mat(float *vec, int height, int width) {
+    int **mat = (int**) malloc(sizeof(int*)*height);
+    int m = 0, i, j;
+    for(i = 0; i < height; i++) {
+        mat[i] = (int*) malloc(sizeof(int)*width);
+        for(j = 0; j < width; j++) {
+            mat[i][j] = (int) vec[m];
+            m++;
+        }
+    }
+    return mat;
+}
+
+double simulatemax_ocl(world *w, int max) {
+
+    cl_int ret;
+
+    // Podatki o platformi
+    cl_platform_id platform_id[10];
+    cl_uint ret_num_platforms;
+    char *buf;
+    size_t buf_len;
+    ret = clGetPlatformIDs(10, platform_id, &ret_num_platforms);
+            // max. "stevilo platform, kazalec na platforme, dejansko "stevilo platform
+    
+    // Podatki o napravi
+    cl_device_id device_id[10];
+    cl_uint ret_num_devices;
+    // Delali bomo s platform_id[0] na GPU
+    ret = clGetDeviceIDs(platform_id[0], CL_DEVICE_TYPE_GPU, 10,    
+                         device_id, &ret_num_devices);              
+            // izbrana platforma, tip naprave, koliko naprav nas zanima
+            // kazalec na naprave, dejansko "stevilo naprav
+
+    // Kontekst
+    cl_context context = clCreateContext(NULL, 1, &device_id[0], NULL, NULL, &ret);
+            // kontekst: vklju"cene platforme - NULL je privzeta, "stevilo naprav, 
+            // kazalci na naprave, kazalec na call-back funkcijo v primeru napake
+            // dodatni parametri funkcije, "stevilka napake
+ 
+    // Ukazna vrsta
+    cl_command_queue command_queue = clCreateCommandQueue(context, device_id[0], 0, &ret);
+            // kontekst, naprava, INORDER/OUTOFORDER, napake
+
+    // Alokacija pomnilnika na napravi
+    cl_mem world_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                w->height*w->width*sizeof(float), mat2vec(w), &ret);
+            // kontekst, na"cin, koliko, lokacija na hostu, napaka
+
+    cl_mem new_world_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
+                w->height*w->width*sizeof(float), NULL, &ret);
+
+    char *kernel_source = read_kernel("src/kernel_local.cl");
+    // Priprava programa
+    cl_program program = clCreateProgramWithSource(context, 1, (const char **)&kernel_source,  
+                                                   NULL, &ret);
+            // kontekst, "stevilo kazalcev na kodo, kazalci na kodo,        
+            // stringi so NULL terminated, napaka
+
+    // Prevajanje
+    ret = clBuildProgram(program, 1, &device_id[0], NULL, NULL, NULL);
+            // program, "stevilo naprav, lista naprav, opcije pri prevajanju,
+            // kazalec na funkcijo, uporabni"ski argumenti
+
+    // Log
+    size_t build_log_len;
+    char *build_log;
+    ret = clGetProgramBuildInfo(program, device_id[0], CL_PROGRAM_BUILD_LOG, 
+                                0, NULL, &build_log_len);
+            // program, "naprava, tip izpisa, 
+            // maksimalna dol"zina niza, kazalec na niz, dejanska dol"zina niza
+    build_log =(char*) malloc(sizeof(char)*(build_log_len+1));
+    ret = clGetProgramBuildInfo(program, device_id[0], CL_PROGRAM_BUILD_LOG, 
+                                build_log_len, build_log, NULL);
+//    printf("%s\n", build_log);
+    free(build_log);
+
+    // "s"cepec: priprava objekta
+    cl_kernel kernel = clCreateKernel(program, "simulateOne", &ret);
+            // program, ime "s"cepca, napaka
+
+    struct timeval t1, t2;
+
+    int i;
+    float *new_world;
+    gettimeofday(&t1, NULL);
+    for(i = 0; i < max; i++) {
+        // "s"cepec: argumenti
+        clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&world_mem_obj);
+        clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&new_world_mem_obj);
+        clSetKernelArg(kernel, 2, sizeof(cl_int), (void *)&w->height);
+        clSetKernelArg(kernel, 3, sizeof(cl_int), (void *)&w->width);
+                // "s"cepec, "stevilka argumenta, velikost podatkov, kazalec na podatke
+
+        // Delitev dela
+        size_t local_item_size[2] = {WORKGROUP_SIZE, WORKGROUP_SIZE};
+        size_t global_item_size[2] = {GLOBALITEM_SIZE, GLOBALITEM_SIZE};
+
+        // "s"cepec: zagon
+        ret = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,                        
+                                     global_item_size, local_item_size, 0, NULL, NULL); 
+                // vrsta, "s"cepec, dimenzionalnost, mora biti NULL, 
+                // kazalec na "stevilo vseh niti, kazalec na lokalno "stevilo niti, 
+                // dogodki, ki se morajo zgoditi pred klicem
+
+    //  printf("kernel error: %s\n", getErrorString(ret));
+
+        new_world = malloc(sizeof(float)*w->height*w->width);
+        // Kopiranje rezultatov
+        ret = clEnqueueReadBuffer(command_queue, new_world_mem_obj, CL_TRUE, 0,                     
+                                  w->height*w->width*sizeof(int), new_world, 0, NULL, NULL);             
+                // branje v pomnilnik iz naparave, 0 = offset
+                // zadnji trije - dogodki, ki se morajo zgoditi prej
+
+        ret = clFlush(command_queue);
+        ret = clFinish(command_queue);
+
+        if(i < max - 1) {
+            cl_mem tmp_mem = world_mem_obj;
+            world_mem_obj = new_world_mem_obj;
+            new_world_mem_obj = tmp_mem;
+        }
+
+    }
+    gettimeofday(&t2, NULL);
+    double time_elapsed = (t2.tv_sec - t1.tv_sec) * 1000;
+    time_elapsed += (double)(t2.tv_usec - t1.tv_usec) / 1000;
+
+    addNewArea(w, vec2mat(new_world, w->height, w->width));
+
+    ret = clReleaseKernel(kernel);
+    ret = clReleaseProgram(program);
+    ret = clReleaseMemObject(world_mem_obj);
+    ret = clReleaseMemObject(new_world_mem_obj);
+    ret = clReleaseCommandQueue(command_queue);
+    ret = clReleaseContext(context);
 
     return time_elapsed;
 }

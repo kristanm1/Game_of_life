@@ -1,10 +1,12 @@
 #ifndef _WORLD_H_
 #define _WORLD_H_
 
-#define WORLD_SIZE_HEIGHT 115
-#define WORLD_SIZE_WIDTH 115
-
+#define WORLD_SIZE_HEIGHT 150
+#define WORLD_SIZE_WIDTH 150
 #define MAX_ITERATION 500
+
+#define WORKGROUP_SIZE 25
+#define GLOBALITEM_SIZE 100
 
 typedef struct {
     int width, height, **area;
@@ -42,5 +44,10 @@ double 	simulateMaxMulty(world*, int, int);
 
 void*	doSomething2(void *arg);
 double	simulateMaxMulty2(world*, int , int);
+
+double simulatemax_ocl(world*, int);
+char* read_kernel(char*);
+float* mat2vec(world*);
+int** vec2mat(float*, int, int);
 
 #endif

@@ -1,0 +1,61 @@
+---v:100, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 52.2958 ms
+standard error: 0.8447 ms
+
+
+---v:200, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 107.4802 ms
+standard error: 0.5848 ms
+
+
+---v:400, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 235.2993 ms
+standard error: 0.6935 ms
+
+
+---v:800, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 514.6665 ms
+standard error: 6.7210 ms
+
+----------------------------------------------------------------------------------------------
+
+---v:100, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 48.9604 ms
+standard error: 0.4583 ms
+
+
+---v:100, s:200, st_iteracij:100 ::   1 OCL---
+povprecen cas: 120.1990 ms
+standard error: 0.6834 ms
+
+
+---v:100, s:400, st_iteracij:100 ::   1 OCL---
+povprecen cas: 268.1602 ms
+standard error: 0.7377 ms
+
+
+---v:100, s:800, st_iteracij:100 ::   1 OCL---
+povprecen cas: 595.9971 ms
+standard error: 0.3930 ms
+
+----------------------------------------------------------------------------------------------
+
+---v:100, s:100, st_iteracij:100 ::   1 OCL---
+povprecen cas: 48.0284 ms
+standard error: 0.4398 ms
+
+
+---v:100, s:100, st_iteracij:200 ::   1 OCL---
+povprecen cas: 95.4965 ms
+standard error: 0.5057 ms
+
+
+---v:100, s:100, st_iteracij:400 ::   1 OCL---
+povprecen cas: 191.6596 ms
+standard error: 0.6966 ms
+
+
+---v:100, s:100, st_iteracij:800 ::   1 OCL---
+povprecen cas: 382.3598 ms
+standard error: 0.6540 ms
+

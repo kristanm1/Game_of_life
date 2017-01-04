@@ -1,0 +1,6 @@
+echo -e "\e[1;32mPrevajam c programe:\e[0m"
+echo -e "\e[1;34m---src/world.c\e[0m"
+echo -e "\e[1;34m---src/world_graphics.c\e[0m"
+echo -e "\e[1;34m---src/world_test.c\e[0m"
+echo -e "\e[1;34m---./main.c\e[0m"
+gcc main.c src/world.c src/world_graphics.c src/world_test.c -I/usr/local/cuda-8.0/include -L/usr/lib/nvidia-367 -lSDL2 -lOpenCL -pthread -fopenmp -lm -o main && echo -e "\e[1;32mUSPELO!!\e[0m" || echo -e "\e[1;32mNI USPELO!!\e[0m"
